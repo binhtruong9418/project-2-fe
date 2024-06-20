@@ -1,4 +1,4 @@
-import {useEffect, useState} from 'react'
+import {useState} from 'react'
 import AddressJson from '../config/AddressJson.json'
 import { toast } from 'react-toastify'
 import { useQuery } from 'react-query'
@@ -10,7 +10,6 @@ import {useTranslation} from "react-i18next";
 const Checkout = () => {
     const navigate = useNavigate()
     const [cookies] = useCookies(['cart']);
-    const userInfo = localStorage.getItem('userInfo');
     const [isOpenProvinceDropdown, setIsOpenProvinceDropdown] = useState<boolean>(false)
     const [isOpenDistrictDropdown, setIsOpenDistrictDropdown] = useState<boolean>(false)
     const [isOpenWardDropdown, setIsOpenWardDropdown] = useState<boolean>(false)
@@ -49,19 +48,6 @@ const Checkout = () => {
     }, {
         enabled: !!cookies.cart
     })
-
-    useEffect(() => {
-        if (userInfo) {
-            const userData = JSON.parse(userInfo);
-            setName(userData.addressDetail.name)
-            setEmail(userData.email)
-            setPhone(userData.addressDetail.phone)
-            setAddress(userData.addressDetail.address)
-            setProvince(userData.addressDetail.province)
-            setDistrict(userData.addressDetail.district)
-            setWard(userData.addressDetail.ward)
-        }
-    }, [userInfo])
 
     const handleSelectProvince = (province: any) => {
         setProvince(province.name)

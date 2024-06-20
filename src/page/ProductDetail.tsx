@@ -7,7 +7,6 @@ import {useCookies} from 'react-cookie';
 import DefaultLayout from "./layout/DefaultLayout";
 import {upperCaseFirstLetter} from "../utils";
 import {useTranslation} from "react-i18next";
-import ListComment from "../compoments/ListComment.tsx";
 
 
 
@@ -32,19 +31,6 @@ export default function () {
             }
         }
     );
-
-    const {
-        data: listComment = [],
-        refetch: refetchComment
-    } = useQuery(['getCommentByProductId', id], ({queryKey}) => DysonApi.getAllCommentByProductId(queryKey[1] as string), {
-        enabled: !!id
-    });
-
-    const {
-        data: userCanComment = false
-    } = useQuery(['userCanComment', id, cartId], ({queryKey}) => DysonApi.checkCanComment(queryKey[2], queryKey[1]), {
-        enabled: !!id && !!cartId
-    })
 
     const handleUpdateQuantity = (type: string) => {
         if (type === 'plus') {
@@ -214,13 +200,6 @@ export default function () {
                         </div>
                     </div>
                 </div>
-                <ListComment
-                    listComment={listComment}
-                    productId={id}
-                    canComment={userCanComment}
-                    refetchComment={refetchComment}
-                    cartId={cartId}
-                />
             </div>
         </DefaultLayout>
     )

@@ -8,6 +8,9 @@ import { HomeOutlined } from '@ant-design/icons';
 import { Link } from 'react-router-dom';
 import Logo from "../../assets/img/logo.png";
 import viVN from 'antd/lib/locale/vi_VN';
+import {useMqtt} from "../../mqtt/MqttProvider.tsx";
+import {toast} from "react-toastify";
+import {useQueryClient} from "react-query";
 
 const { Header, Content, Sider } = Layout;
 
@@ -15,11 +18,44 @@ const AdminHome = () => {
     const [tab, setTab] = useState('1')
     const userInfo = JSON.parse(localStorage.getItem('userInfo') as string);
     const jwtToken = localStorage.getItem('jwtToken');
+    const {mqttClient, mqttStatus, subscribeToTopic, mqttData} = useMqtt();
+    const queryClient = useQueryClient()
     useEffect(() => {
         if (!userInfo || !jwtToken) {
             window.location.href = '/'
         }
     }, [])
+
+    useEffect(() => {
+        if(mqttClient && mqttStatus === 'Connected') {
+            const topic = '/new-order';
+            const cancelTopic = '/cancel-order';
+            subscribeToTopic([topic, cancelTopic]);
+        }
+    }, []);
+
+    useEffect(() => {
+        console.log('mqttData', mqttData.topic)
+        if(mqttData.topic === '/new-order') {
+            console.log('New order', mqttData.message.toString())
+
+            const data = JSON.parse(mqttData.message.toString());
+            console.log(data)
+
+            toast.success('Có đơn hàng mới')
+
+            queryClient.refetchQueries(['getAllOrder'])
+        } else if(mqttData.topic === '/cancel-order') {
+            console.log('Cancel order', mqttData.message.toString())
+
+            const data = JSON.parse(mqttData.message.toString());
+            console.log(data)
+
+            toast.error('Có đơn hàng bị hủy')
+
+            queryClient.refetchQueries(['getAllOrder'])
+        }
+    }, [mqttData]);
 
     const handleLogout = () => {
         localStorage.removeItem('userInfo');

@@ -9,13 +9,17 @@ import {useTranslation} from "react-i18next";
 const TrackingOrder = () => {
     const navigate = useNavigate()
     const [orderId, setOrderId] = useState<string>('')
+    const [identifier, setIdentifier] = useState<string>('')
     const {t} = useTranslation()
 
     const handleTracking = async () => {
+        if(!orderId || !identifier) {
+            toast.error(t("Vui lòng nhập mã đơn hàng và số điện thoại hoặc email"))
+        }
         try {
-            const order = await DysonApi.getOrderById(orderId)
+            const order = await DysonApi.getOrderById(orderId, identifier)
             if (order) {
-                navigate(`/tracking-order/${orderId}`)
+                navigate(`/tracking-order/${orderId}?identifier=${identifier}`)
             }
         } catch (error: any) {
             console.log(error.message)
@@ -36,6 +40,12 @@ const TrackingOrder = () => {
                     style={{width: 300, marginTop: 20, marginBottom: 20}}
                     value={orderId}
                     onChange={(e) => setOrderId(e.target.value)}
+                />
+                <Input
+                    placeholder={(t("SDT hoặc Email"))}
+                    style={{width: 300, marginTop: 20, marginBottom: 20}}
+                    value={identifier}
+                    onChange={(e) => setIdentifier(e.target.value)}
                 />
                 <button
                     type="button"

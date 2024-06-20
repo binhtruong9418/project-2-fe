@@ -1,6 +1,7 @@
 import {toast, ToastContainer} from "react-toastify";
 import {useEffect} from "react";
 import i18n from "../translation";
+import {MqttProvider} from "../mqtt/MqttProvider.tsx";
 
 // @ts-ignore
 export function updater<T>(Component: React.ComponentType<any>) {
@@ -23,10 +24,10 @@ export function updater<T>(Component: React.ComponentType<any>) {
             getLanguage().then()
         }, []);
         return (
-            <>
+            <MqttProvider>
                 <Component {...props} />
                 <ToastContainer autoClose={3000} />
-            </>
+            </MqttProvider>
         );
     };
 }

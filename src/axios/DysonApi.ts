@@ -106,17 +106,12 @@ const DysonApi = {
         return response.data
     },
 
-    getOrderById: async (id: string): Promise<any> => {
-        const url = `order/${id}`
+    getOrderById: async (id: string, identifier: string): Promise<any> => {
+        const url = `order/${id}/${identifier}`
         const response = await AxiosClient.get(url);
         return response.data
     },
 
-    updateOrderStatus: async (id: string, status: string): Promise<any> => {
-        const url = `order/update-status/${id}`
-        const response = await AxiosClient.put(url, { status });
-        return response.data
-    },
 
     //admin
     getEmailCode: async (email: string): Promise<any> => {

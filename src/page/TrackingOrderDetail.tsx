@@ -1,5 +1,5 @@
 import DefaultLayout from "./layout/DefaultLayout.tsx";
-import {useNavigate, useParams} from "react-router-dom";
+import {useNavigate, useParams, useSearchParams} from "react-router-dom";
 import {useQuery} from "react-query";
 import DysonApi from "../axios/DysonApi.ts";
 import {Descriptions, Divider, Skeleton, Timeline, Typography} from "antd";
@@ -13,15 +13,20 @@ import {useMemo} from "react";
 
 export default function TrackingOrderDetail() {
     const {id: orderId} = useParams();
+    const [searchParams] = useSearchParams();
+
+    console.log(searchParams, "searchParams")
+    const identifier = searchParams.get('identifier')
     const navigate = useNavigate();
     const {t} = useTranslation();
     const {
         data: orderDetail,
         isLoading,
+        isError: isOrderDetailError,
     } = useQuery(
-        ['getOrderDetail', orderId],
+        ['getOrderDetail', orderId, identifier],
         async ({queryKey}) => {
-            const res = await DysonApi.getOrderById(queryKey[1] as string)
+            const res = await DysonApi.getOrderById(queryKey[1] as string, identifier as string)
             const listProduct = await Promise.all(res.products.map(async (e: any) => {
                 const product = await DysonApi.getProductById(e.productId)
                 console.log(product, "product")
@@ -36,10 +41,9 @@ export default function TrackingOrderDetail() {
                 products: listProduct
             }
         }, {
-            enabled: !!orderId
+            enabled: !!orderId && !!identifier
         })
 
-    console.log(orderDetail)
     const {totalDiscount, totalNotDiscount, totalPayment, shippingFee} = useMemo(() => {
         if (!orderDetail) return {
             totalDiscount: 0,
@@ -55,6 +59,14 @@ export default function TrackingOrderDetail() {
             shippingFee: orderDetail?.shippingFee   // 0
         }
     }, [orderDetail])
+
+    if(isOrderDetailError || !orderId || !identifier) {
+        return (
+            <div>
+                {t("Đơn hàng không tồn tại")}
+            </div>
+        )
+    }
     if (isLoading) {
         return (
             <Skeleton active/>
