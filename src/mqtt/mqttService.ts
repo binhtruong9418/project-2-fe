@@ -22,8 +22,8 @@ function createMqttClient(
     return mqtt
         .connect(connectUrl, {
             clientId: uniqueId,
-            username: import.meta.env.MQTT_USERNAME || 'admin',
-            password: import.meta.env.MQTT_PASSWORD || 'abcD!234',
+            username: import.meta.env.MQTT_USERNAME,
+            password: import.meta.env.MQTT_PASSWORD,
             protocol: 'wss',
             path: '/mqtt',
         })
