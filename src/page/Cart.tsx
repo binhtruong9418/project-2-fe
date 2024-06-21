@@ -24,7 +24,9 @@ export default function () {
             const product = await DysonApi.getProductById(e.productId);
             return {
                 ...product,
-                quantity: e.quantity
+                quantity: e.quantity,
+                color: e.color,
+                size: e.size
             }
         }))
 
@@ -38,12 +40,14 @@ export default function () {
     })
 
 
-    const handleChangeQuantity = async (productId: string, quantity: number, type: string) => {
+    const handleChangeQuantity = async ({productId, quantity, type, color, size}) => {
         try {
             await DysonApi.updateCart(cookies.cart, {
                 productId,
                 quantity,
-                type
+                type,
+                color,
+                size
             })
             await refetch()
             await queryClient.invalidateQueries('myCartQuantity')
@@ -85,6 +89,8 @@ export default function () {
                                                 price={e.currentPrice}
                                                 quantity={e.quantity}
                                                 image={e.images[0]}
+                                                color={e.color}
+                                                size={e.size}
                                                 handleChangeQuantity={handleChangeQuantity}
                                             />
                                         ))

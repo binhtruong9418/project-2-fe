@@ -19,6 +19,8 @@ import {toast} from 'react-toastify'
 import {CloudUploadOutlined, DeleteOutlined, LeftOutlined, RightOutlined} from "@ant-design/icons";
 import DysonApi from '../../axios/DysonApi.ts';
 import {useQuery} from 'react-query';
+import {LIST_PRODUCT_SIZE} from "../../constants";
+import AddColor from "./AddColor.tsx";
 
 const IMAGE_TYPES = ["image/png", "image/jpeg"];
 
@@ -33,6 +35,7 @@ const AddProductModal = ({
     const [listImage, setListImage] = useState<any>([])
     const carouselRef = useRef(null)
     const [isLoading, setIsLoading] = useState<boolean>(false);
+    const [productColor, setProductColor] = useState<string[]>([])
 
     const {
         data: listCategory = [],
@@ -51,10 +54,7 @@ const AddProductModal = ({
             productPrice,
             productQuantity,
             productDiscount,
-            author,
-            publisher,
-            dimension,
-            totalPage
+            productSize
         } = data
 
         try {
@@ -73,13 +73,11 @@ const AddProductModal = ({
                 quantity: productQuantity,
                 images: listNewImages,
                 discount: productDiscount ?? 0,
-                author,
-                publisher,
-                dimension,
-                totalPage
+                colors: productColor,
+                sizes: productSize
             })
             await refetchProduct()
-            toast.success("Thêm sách thành công");
+            toast.success("Thêm sản phẩm thành công");
             onResetForm()
             setIsVisible(false);
         } catch (error: any) {
@@ -113,6 +111,7 @@ const AddProductModal = ({
         form.resetFields();
         setListImage([]);
         setImagesFile([]);
+        setProductColor([])
     }
 
     return (
@@ -123,7 +122,7 @@ const AddProductModal = ({
         >
             <div>
                 <Typography.Title level={4}>
-                    Thêm sách
+                    Thêm sản phẩm
                 </Typography.Title>
 
                 <Space
@@ -194,11 +193,11 @@ const AddProductModal = ({
                         name='productName'
                         rules={[{
                             required: true,
-                            message: 'Vui lòng nhập tên sach!',
+                            message: 'Vui lòng nhập tên sản phẩm!',
                         }]}
                     >
                         <Input
-                            placeholder="Tên sách"
+                            placeholder="Tên sản phẩm"
                             bordered={false}
                             required
                         />
@@ -235,41 +234,30 @@ const AddProductModal = ({
                         </Select>
                     </Form.Item>
                     <Form.Item
-                        name={"author"}
+                        name={"productSize"}
+                        required={true}
                     >
-                        <Input
-                            placeholder="Tác giả"
+                        <Select
+                            placeholder={"Size"}
+                            mode="multiple"
                             size="large"
-                        />
-                    </Form.Item>
-                    <Form.Item
-                        name={"publisher"}
-                    >
-                        <Input
-                            placeholder="Nhà xuất bản"
-                            size="large"
-                        />
-                    </Form.Item>
-                    <Row gutter={[10, 10]}>
-                        <Col span={12}>
-                            <Form.Item
-                                name={"dimension"}
+                            allowClear={true}
                             >
-                                <Input
-                                    placeholder="Kích thước"
-                                    size="large"
-                                />
-                            </Form.Item>
-                        </Col>
-                        <Col span={12}>
+                            {
+                                LIST_PRODUCT_SIZE.map((size) => (
+                                    <Select.Option value={size.value} key={size.value}>{size.label}</Select.Option>
+                                ))
+                            }
+                        </Select>
+                    </Form.Item>
+                    <Row>
+                        <Col span={24}>
                             <Form.Item
-                                name={"totalPage"}
-                                style={{width: '100%'}}
+                                name="productColor"
                             >
-                                <InputNumber
-                                    placeholder="Số trang"
-                                    size="large"
-                                    style={{width: '100%'}}
+                                <AddColor
+                                    tags={productColor}
+                                    setTags={setProductColor}
                                 />
                             </Form.Item>
                         </Col>
@@ -278,7 +266,7 @@ const AddProductModal = ({
                         name="productPrice"
                         rules={[{
                             required: true,
-                            message: 'Vui lòng nhập giá sách'
+                            message: 'Vui lòng nhập giá sản phẩm'
                         }]}
                     >
                         <InputNumber
@@ -307,7 +295,7 @@ const AddProductModal = ({
                         name="productQuantity"
                         rules={[{
                             required: true,
-                            message: 'Vui lòng nhập số lượng sách!'
+                            message: 'Vui lòng nhập số lượng sản phẩm!'
                         }]}
                     >
                         <InputNumber
@@ -319,7 +307,7 @@ const AddProductModal = ({
 
                     <Form.Item>
                         <Button type="primary" htmlType="submit" className="w-50" disabled={isLoading}>
-                            {isLoading ? 'Loading...' : 'Thêm sách'}
+                            {isLoading ? 'Loading...' : 'Thêm sản phẩm'}
                         </Button>
                         <Button htmlType="button" onClick={onResetForm} className="w-50">
                             {isLoading ? 'Loading...' : 'Reset'}

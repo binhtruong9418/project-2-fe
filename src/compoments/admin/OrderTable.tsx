@@ -24,6 +24,18 @@ const expandableProduct = (products: any) => {
             render: (productName: string) => <p>{productName}</p>,
         },
         {
+            title: 'Màu',
+            dataIndex: 'productColor',
+            key: 'productColor',
+            render: (productColor: string) => <p>{productColor}</p>,
+        },
+        {
+            title: 'Size',
+            dataIndex: 'productSize',
+            key: 'productSize',
+            render: (productSize: string) => <p>{productSize}</p>,
+        },
+        {
             title: 'Số lượng',
             dataIndex: 'productQuantity',
             key: 'productQuantity',
@@ -44,6 +56,8 @@ const expandableProduct = (products: any) => {
             productName: product.name,
             productQuantity: product.quantity,
             productPrice: product.orderPrice,
+            productColor: product.color,
+            productSize: product.size,
         }
     })
 
@@ -81,6 +95,8 @@ export default function OrderTable(): JSX.Element {
                     ...product,
                     quantity: e.quantity,
                     orderPrice: e.price,
+                    color: e.color,
+                    size: e.size,
                 }
             }))
 

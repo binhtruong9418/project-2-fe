@@ -1,7 +1,7 @@
 import PropTypes, { InferProps } from 'prop-types';
 import { useEffect, useState } from 'react';
 
-export default function ProductCardInfo({ id, name, price, image, quantity, handleChangeQuantity }: InferProps<typeof ProductCardInfo.propTypes>): JSX.Element {
+export default function ProductCardInfo({ id, name, price, image, color, size, quantity, handleChangeQuantity }: InferProps<typeof ProductCardInfo.propTypes>): JSX.Element {
     const [currentQuantity, setCurrentQuantity] = useState<number>(quantity)
     useEffect(() => {
         setCurrentQuantity(quantity)
@@ -13,6 +13,8 @@ export default function ProductCardInfo({ id, name, price, image, quantity, hand
             </td>
             <td className="cart_product_desc">
                 <h5>{name}</h5>
+                <h5>Color: {color}</h5>
+                <h5>Size: {size}</h5>
             </td>
             <td className="price">
                 <span>{price.toLocaleString('vi-VN')}₫</span>
@@ -20,7 +22,17 @@ export default function ProductCardInfo({ id, name, price, image, quantity, hand
             <td className="qty">
                 <div className="qty-btn d-flex">
                     <div className="quantity">
-                        <span className="qty-minus" onClick={() => handleChangeQuantity(id, 1, 'decrease').then()}><i className="fa fa-minus" aria-hidden="true"></i></span>
+                        <span className="qty-minus" onClick={() => {
+                            handleChangeQuantity(
+                                {
+                                    productId: id,
+                                    quantity: 1,
+                                    type: 'decrease',
+                                    color: color,
+                                    size: size,
+                                }
+                            ).then()
+                        }}><i className="fa fa-minus" aria-hidden="true"></i></span>
                         <input
                             type="number"
                             className="qty-text"
@@ -33,14 +45,28 @@ export default function ProductCardInfo({ id, name, price, image, quantity, hand
                             onBlur={(e) => {
                                 const value = e.target.valueAsNumber
                                 handleChangeQuantity(
-                                    id,
-                                    Math.abs(value - quantity),
-                                    value - quantity > 0 ? 'increase' : 'decrease'
+                                    {
+                                        productId: id,
+                                        quantity: Math.abs(value - quantity),
+                                        type: value - quantity > 0 ? 'increase' : 'decrease',
+                                        color: color,
+                                        size: size,
+                                    }
                                 ).then()
                             }
                             }
                         />
-                        <span className="qty-plus" onClick={() => handleChangeQuantity(id, 1, 'increase').then()}><i className="fa fa-plus" aria-hidden="true"></i></span>
+                        <span className="qty-plus" onClick={() => {
+                            handleChangeQuantity(
+                                {
+                                    productId: id,
+                                    quantity: 1,
+                                    type: 'increase',
+                                    color: color,
+                                    size: size,
+                                }
+                            ).then()
+                        }}><i className="fa fa-plus" aria-hidden="true"></i></span>
                     </div>
                 </div>
             </td>
@@ -54,5 +80,7 @@ ProductCardInfo.propTypes = {
     price: PropTypes.number.isRequired,
     image: PropTypes.string.isRequired,
     quantity: PropTypes.number.isRequired,
+    color: PropTypes.string.isRequired,
+    size: PropTypes.string.isRequired,
     handleChangeQuantity: PropTypes.func.isRequired,
 }

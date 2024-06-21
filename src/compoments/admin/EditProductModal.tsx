@@ -19,6 +19,8 @@ import { toast } from 'react-toastify'
 import { CloudUploadOutlined, DeleteOutlined, LeftOutlined, RightOutlined } from "@ant-design/icons";
 import DysonApi from '../../axios/DysonApi.ts';
 import { useQuery } from 'react-query';
+import {LIST_PRODUCT_SIZE} from "../../constants";
+import AddColor from "./AddColor.tsx";
 const IMAGE_TYPES = ["image/png", "image/jpeg"];
 
 
@@ -32,10 +34,8 @@ const EditProductModal = ({ isVisible,
     category,
     quantity,
     discount,
-    author,
-    totalPage,
-    dimension,
-    publisher,
+    sizes,
+    colors,
     refetchProduct,
 }: any) => {
     const [form] = Form.useForm();
@@ -43,6 +43,7 @@ const EditProductModal = ({ isVisible,
     const [listImage, setListImage] = useState<any[]>(images)
     const carouselRef = useRef(null)
     const [isLoading, setIsLoading] = useState<boolean>(false);
+    const [productColor, setProductColor] = useState<string[]>(colors);
 
     const {
         data: listCategory = [],
@@ -61,10 +62,7 @@ const EditProductModal = ({ isVisible,
             productPrice,
             productQuantity,
             productDiscount,
-            author,
-            totalPage,
-            publisher,
-            dimension
+            productSize
         } = data
 
         try {
@@ -90,10 +88,8 @@ const EditProductModal = ({ isVisible,
                 quantity: productQuantity,
                 images: listNewImages,
                 discount: productDiscount,
-                author,
-                totalPage,
-                publisher,
-                dimension
+                sizes: productSize,
+                colors: productColor,
             })
             form.setFieldsValue({
                 productName: updateProduct.name,
@@ -102,19 +98,16 @@ const EditProductModal = ({ isVisible,
                 productPrice: updateProduct.price,
                 productQuantity: updateProduct.quantity,
                 productDiscount: updateProduct.discount,
-                author: updateProduct.productDetail.author,
-                totalPage: updateProduct.productDetail.totalPage,
-                publisher: updateProduct.productDetail.publisher,
-                dimension: updateProduct.productDetail.dimension
+                productSize: updateProduct.sizes,
             })
 
             setImagesFile(updateProduct.images)
             setListImage(updateProduct.images)
             await refetchProduct()
-            toast.success("Cập nhật sách thành công");
+            toast.success("Cập nhật sản phẩm thành công");
             setIsVisible(false);
         } catch (error) {
-            toast.error("Cập nhật sách thất bại");
+            toast.error("Cập nhật sản phẩm thất bại");
         } finally {
             setIsLoading(false);
         }
@@ -154,7 +147,7 @@ const EditProductModal = ({ isVisible,
         >
             <div>
                 <Typography.Title level={4}>
-                    Cập nhật sách
+                    Cập nhật sản phẩm
                 </Typography.Title>
 
                 <Space
@@ -226,10 +219,7 @@ const EditProductModal = ({ isVisible,
                         productPrice: price,
                         productQuantity: quantity,
                         productDiscount: discount,
-                        author: author,
-                        totalPage,
-                        publisher,
-                        dimension
+                        productSize: sizes,
                     }}
                     onFinish={handleSubmit}
                     form={form}
@@ -238,11 +228,11 @@ const EditProductModal = ({ isVisible,
                         name='productName'
                         rules={[{
                             required: true,
-                            message: 'Vui lòng nhập tên sách!',
+                            message: 'Vui lòng nhập tên sản phẩm!',
                         }]}
                     >
                         <Input
-                            placeholder="Tên sách"
+                            placeholder="Tên sản phẩm"
                             bordered={false}
                             required
                         />
@@ -278,42 +268,32 @@ const EditProductModal = ({ isVisible,
                             ))}
                         </Select>
                     </Form.Item>
+
                     <Form.Item
-                        name={"author"}
+                        name={"productSize"}
+                        required={true}
                     >
-                        <Input
-                            placeholder="Tác giả"
+                        <Select
+                            placeholder={"Size"}
+                            mode="multiple"
                             size="large"
-                        />
+                            allowClear={true}
+                        >
+                            {
+                                LIST_PRODUCT_SIZE.map((size) => (
+                                    <Select.Option value={size.value} key={size.value}>{size.label}</Select.Option>
+                                ))
+                            }
+                        </Select>
                     </Form.Item>
-                    <Form.Item
-                        name={"publisher"}
-                    >
-                        <Input
-                            placeholder="Nhà xuất bản"
-                            size="large"
-                        />
-                    </Form.Item>
-                    <Row gutter={[10, 10]}>
-                        <Col span={12}>
+                    <Row>
+                        <Col span={24}>
                             <Form.Item
-                                name={"dimension"}
+                                name="productColor"
                             >
-                                <Input
-                                    placeholder="Kích thước"
-                                    size="large"
-                                />
-                            </Form.Item>
-                        </Col>
-                        <Col span={12}>
-                            <Form.Item
-                                name={"totalPage"}
-                                style={{width: '100%'}}
-                            >
-                                <InputNumber
-                                    placeholder="Số trang"
-                                    size="large"
-                                    style={{width: '100%'}}
+                                <AddColor
+                                    tags={productColor}
+                                    setTags={setProductColor}
                                 />
                             </Form.Item>
                         </Col>
@@ -322,7 +302,7 @@ const EditProductModal = ({ isVisible,
                         name="productPrice"
                         rules={[{
                             required: true,
-                            message: 'Vui lòng nhập giá sách'
+                            message: 'Vui lòng nhập giá sản phẩm'
                         }]}
                     >
                         <InputNumber
@@ -351,7 +331,7 @@ const EditProductModal = ({ isVisible,
                         name="productQuantity"
                         rules={[{
                             required: true,
-                            message: 'Vui lòng nhập số lượng sách!'
+                            message: 'Vui lòng nhập số lượng sản phẩm!'
                         }]}
                     >
                         <InputNumber
@@ -363,7 +343,7 @@ const EditProductModal = ({ isVisible,
 
                     <Form.Item>
                         <Button type="primary" htmlType="submit" className="w-50" disabled={isLoading}>
-                            {isLoading ? 'Loading...' : 'Cập nhật sách'}
+                            {isLoading ? 'Loading...' : 'Cập nhật sản phẩm'}
                         </Button>
                         <Button htmlType="button" onClick={onResetForm} className="w-50">
                             {isLoading ? 'Loading...' : 'Reset'}

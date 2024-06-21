@@ -1,4 +1,4 @@
-import {Button, Carousel, Image, Input, Pagination, Popconfirm, Select, Space, Table} from "antd";
+import {Button, Carousel, Flex, Image, Input, Pagination, Popconfirm, Select, Space, Table} from "antd";
 import {useState} from "react";
 import {useQuery} from "react-query";
 import DysonApi from "../../axios/DysonApi.ts";
@@ -43,11 +43,11 @@ export default function ProductTable(): JSX.Element {
         try {
             const res = await DysonApi.deleteProductById(id)
             if (res) {
-                toast.success('Xóa sách thành công!')
+                toast.success('Xóa sản phẩm thành công!')
                 await refetch()
             }
         } catch (error) {
-            toast.error('Xóa sách thất bại')
+            toast.error('Xóa sản phẩm thất bại')
         }
     }
 
@@ -82,7 +82,7 @@ export default function ProductTable(): JSX.Element {
             width: 120
         },
         {
-            title: 'Tên sách',
+            title: 'Tên sản phẩm',
             dataIndex: 'productName',
             key: 'productName',
             width: 200
@@ -109,15 +109,27 @@ export default function ProductTable(): JSX.Element {
             width: 120
         },
         {
-            title: 'Thông tin sách',
+            title: 'Thông tin sản phẩm',
             key: 'productDetail',
-            dataIndex: 'productDetail',
-            render: (productDetail: any) => (
+            render: (_: any, record: any) => (
                 <div>
-                    <p>Tác giả: {productDetail?.author}</p>
-                    <p>NXB: {productDetail?.publisher}</p>
-                    <p>Kích thước: {productDetail?.dimension}</p>
-                    <p>Số trang: {productDetail?.totalPage}</p>
+                    <p>Màu sắc:</p>
+                    <Flex gap={4}>
+                        {
+                            record.productColor.map((color: string, index: number) => (
+                                <p key={index}>{color} ,</p>
+                            ))
+                        }
+                    </Flex>
+
+                    <p>Kích thước:</p>
+                    <Flex gap={4}>
+                        {
+                            record.productSize.map((size: string, index: number) => (
+                                <p key={index}>{size} ,</p>
+                            ))
+                        }
+                    </Flex>
                 </div>
             ),
         },
@@ -186,7 +198,8 @@ export default function ProductTable(): JSX.Element {
             productQuantity: product?.quantity,
             productDiscount: product?.discount,
             createdAt: product?.createdAt,
-            productDetail: product?.productDetail
+            productSize: product?.sizes,
+            productColor: product?.colors
         }
     })
 
@@ -197,7 +210,7 @@ export default function ProductTable(): JSX.Element {
     return (
         <div>
             <Button type="primary" className="my-3 ml-3" onClick={() => setIsAdd(true)}>
-                Thêm sách
+                Thêm sản phẩm
             </Button>
             <div className={'ml-3 mb-4'}>
                 <Space>
@@ -281,10 +294,8 @@ export default function ProductTable(): JSX.Element {
                     images={currentEditProduct.productImage}
                     id={currentEditProduct.key}
                     discount={currentEditProduct.productDiscount}
-                    author={currentEditProduct.productDetail.author}
-                    publisher={currentEditProduct.productDetail.publisher}
-                    totalPage={currentEditProduct.productDetail.totalPage}
-                    dimension={currentEditProduct.productDetail.dimension}
+                    sizes={currentEditProduct.productSize}
+                    colors={currentEditProduct.productColor}
                     refetchProduct={refetch}
                 />
             }

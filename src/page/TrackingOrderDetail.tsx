@@ -29,11 +29,12 @@ export default function TrackingOrderDetail() {
             const res = await DysonApi.getOrderById(queryKey[1] as string, identifier as string)
             const listProduct = await Promise.all(res.products.map(async (e: any) => {
                 const product = await DysonApi.getProductById(e.productId)
-                console.log(product, "product")
                 return {
                     ...product,
                     quantity: e.quantity,
                     orderPrice: e.price,
+                    color: e.color,
+                    size: e.size
                 }
             }))
             return {
@@ -60,7 +61,7 @@ export default function TrackingOrderDetail() {
         }
     }, [orderDetail])
 
-    if(isOrderDetailError || !orderId || !identifier) {
+    if (isOrderDetailError || !orderId || !identifier) {
         return (
             <div>
                 {t("Đơn hàng không tồn tại")}
@@ -215,8 +216,14 @@ export default function TrackingOrderDetail() {
                                                         e?.name && e?.orderPrice ? (
                                                             <>
                                                                 <div
-                                                                    className={'ml-3'}>{upperCaseFirstLetter(e?.name)}</div>
-
+                                                                    className={'ml-3'}>{upperCaseFirstLetter(e?.name)}
+                                                                </div>
+                                                                <div
+                                                                    className={'ml-3'}>{t("Màu")}: {e?.color}
+                                                                </div>
+                                                                <div
+                                                                    className={'ml-3'}>{t("Size")}: {e?.size}
+                                                                </div>
                                                                 <div
                                                                     className={'ml-3'}>{t("Giá")}: {e?.orderPrice.toLocaleString('vi-VN')}₫
                                                                 </div>

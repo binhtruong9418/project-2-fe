@@ -18,6 +18,10 @@ export default function () {
     const queryClient = useQueryClient();
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [currentImageIndex, setCurrentImageIndex] = useState<number>(0);
+    const [color, setColor] = useState<string>('');
+    const [size, setSize] = useState<string>('');
+    const [isOpenSelectColor, setIsOpenSelectColor] = useState<boolean>(false);
+    const [isOpenSelectSize, setIsOpenSelectSize] = useState<boolean>(false);
     const {t} = useTranslation()
     const {
         data: product,
@@ -42,12 +46,18 @@ export default function () {
     }
 
     const handleAddToCart = async () => {
+        if(!color || !size) {
+            toast.error(t("Vui lòng chọn màu và size"))
+            return
+        }
         try {
             setIsLoading(true)
             const resp = await DysonApi.updateCart(cartId, {
                 productId: id,
                 quantity,
-                type: 'increase'
+                type: 'increase',
+                color,
+                size
             })
             if (resp) {
                 toast.success(t("Thêm vào giỏ hàng thành công"))
@@ -149,24 +159,80 @@ export default function () {
                                     </div>
                                     <p className="avaibility"><i className="fa fa-circle"></i> {t("Còn hàng")}</p>
                                 </div>
-                                <div className={'mt-3'}>
-                                    <div>
-                                        Nhà xuất bản: {product?.productDetail?.publisher}
-                                    </div>
-                                    <div>
-                                        Tác giả: {product?.productDetail?.author}
-                                    </div>
-                                    <div>
-                                        Kích thước: {product?.productDetail?.dimension}
-                                    </div>
-                                    <div>
-                                        Số trang: {product?.productDetail?.totalPage} trang
-                                    </div>
-                                </div>
                                 <div className="short_overview my-5">
                                     <p>{product.description}</p>
                                 </div>
                                 <div className="cart clearfix">
+
+                                    <div className={'product-topbar'}>
+                                        <div className={"product-sorting d-flex mb-3"}>
+                                            <div className={"sort-by-date d-flex align-items-center mr-15"}
+                                                 onClick={() => {
+                                                     setIsOpenSelectColor(!isOpenSelectColor)
+                                                 }}>
+                                                <p>{t("Chọn màu")}</p>
+                                                <div className={isOpenSelectColor ? "nice-select open" : "nice-select"}>
+                                            <span className={"current ml-1"}>
+                                                {product?.colors?.find((item: any) => item === color)}
+                                            </span>
+                                                    <ul className={"list"}>
+                                                        {
+                                                            product?.colors?.map((item: string) => {
+                                                                return (
+                                                                    <li
+                                                                        key={item}
+                                                                        onClick={() => {
+                                                                            setColor(item)
+                                                                            setIsOpenSelectColor(false)
+                                                                        }}
+                                                                        className={color === item ?
+                                                                            "option selected focus" :
+                                                                            "option"}
+                                                                    >
+                                                                        {item}
+                                                                    </li>
+                                                                )
+                                                            })
+                                                        }
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div className={"product-sorting d-flex"}>
+                                            <div className={"sort-by-date d-flex align-items-center mr-15"}
+                                                 onClick={() => {
+                                                     setIsOpenSelectSize(!isOpenSelectSize)
+                                                 }}>
+                                                <p>{t("Chọn size")}</p>
+                                                <div className={isOpenSelectSize ? "nice-select open" : "nice-select"}>
+                                            <span className={"current ml-1"}>
+                                                {product?.sizes?.find((item: any) => item === size)}
+                                            </span>
+                                                    <ul className={"list"}>
+                                                        {
+                                                            product?.sizes?.map((item: string) => {
+                                                                return (
+                                                                    <li
+                                                                        key={item}
+                                                                        onClick={() => {
+                                                                            setSize(item)
+                                                                            setIsOpenSelectSize(false)
+                                                                        }}
+                                                                        className={size === item ?
+                                                                            "option selected focus" :
+                                                                            "option"}
+                                                                    >
+                                                                        {item}
+                                                                    </li>
+                                                                )
+                                                            })
+                                                        }
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
                                     <div className="cart-btn d-flex mb-50">
                                         <p>{t("Số lượng")}</p>
                                         <div className="quantity">

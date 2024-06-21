@@ -54,3 +54,26 @@ export const PAYMENT_METHOD_LABEL = [
         value: PaymentMethod.VNPAY
     }
 ]
+
+export const LIST_PRODUCT_SIZE = [
+    {
+        label: "S",
+        value: "S"
+    },
+    {
+        label: "M",
+        value: "M"
+    },
+    {
+        label: "L",
+        value: "L"
+    },
+    {
+        label: "XL",
+        value: "XL"
+    },
+    {
+        label: "XXL",
+        value: "XXL"
+    }
+]
