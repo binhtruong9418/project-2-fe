@@ -210,6 +210,8 @@ export default function () {
                                     images={item.images}
                                     name={item.name}
                                     currentPrice={item.currentPrice}
+                                    discount={item.discount}
+                                    price={item.price}
                                 />
                             ))
                         }

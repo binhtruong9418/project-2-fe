@@ -53,9 +53,14 @@ const AddProductModal = ({
             productCategory,
             productPrice,
             productQuantity,
-            productDiscount,
+            productCurrentPrice,
             productSize
         } = data
+
+        if(productCurrentPrice && productCurrentPrice > productPrice) {
+            toast.error("Giá khuyến mãi không thể lớn hơn giá gốc")
+            return
+        }
 
         try {
             setIsLoading(true);
@@ -65,6 +70,7 @@ const AddProductModal = ({
                     return DysonApi.uploadFile(item)
                 }))
             }
+
             await DysonApi.addProduct({
                 name: productName,
                 description: productDescription,
@@ -72,7 +78,7 @@ const AddProductModal = ({
                 price: productPrice,
                 quantity: productQuantity,
                 images: listNewImages,
-                discount: productDiscount ?? 0,
+                currentPrice: productCurrentPrice ?? productPrice,
                 colors: productColor,
                 sizes: productSize
             })
@@ -266,7 +272,7 @@ const AddProductModal = ({
                         name="productPrice"
                         rules={[{
                             required: true,
-                            message: 'Vui lòng nhập giá sản phẩm'
+                            message: 'Vui lòng nhập giá gốc sản phẩm'
                         }]}
                     >
                         <InputNumber
@@ -280,14 +286,14 @@ const AddProductModal = ({
 
 
                     <Form.Item
-                        name="productDiscount"
+                        name="productCurrentPrice"
                     >
                         <InputNumber
-                            placeholder="Khuyến mãi"
-                            addonAfter='%'
+                            placeholder="Giá khuyến mãi"
+                            addonAfter='₫'
                             className="w-100"
                             size="large"
-                            defaultValue={0}
+                            min={0}
                         />
                     </Form.Item>
 

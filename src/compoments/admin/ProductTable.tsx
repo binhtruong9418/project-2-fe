@@ -137,14 +137,20 @@ export default function ProductTable(): JSX.Element {
             title: 'Giá',
             dataIndex: 'productPrice',
             key: 'productPrice',
-            render: (productPrice: number) => <p>{productPrice?.toLocaleString('vi-VN')}₫</p>,
+            render: (productPrice: number) => <p>{productPrice?.toLocaleString('vi-VN', {
+                style: 'currency',
+                currency: 'VND'
+            })}</p>,
             width: 100
         },
         {
-            title: 'Khuyến mãi',
-            dataIndex: 'productDiscount',
-            key: 'productDiscount',
-            render: (productDiscount: number) => <p>{productDiscount}%</p>,
+            title: 'Giá khuyến mãi',
+            dataIndex: 'productCurrentPrice',
+            key: 'productCurrentPrice',
+            render: (productCurrentPrice: number) => <p>{productCurrentPrice?.toLocaleString('vi-VN', {
+                style: 'currency',
+                currency: 'VND'
+            })}</p>,
             width: 100
         },
         {
@@ -196,7 +202,7 @@ export default function ProductTable(): JSX.Element {
             productDescription: product?.description,
             productPrice: product?.price,
             productQuantity: product?.quantity,
-            productDiscount: product?.discount,
+            productCurrentPrice: product?.currentPrice,
             createdAt: product?.createdAt,
             productSize: product?.sizes,
             productColor: product?.colors
@@ -293,7 +299,7 @@ export default function ProductTable(): JSX.Element {
                     quantity={currentEditProduct.productQuantity}
                     images={currentEditProduct.productImage}
                     id={currentEditProduct.key}
-                    discount={currentEditProduct.productDiscount}
+                    currentPrice={currentEditProduct.productCurrentPrice}
                     sizes={currentEditProduct.productSize}
                     colors={currentEditProduct.productColor}
                     refetchProduct={refetch}

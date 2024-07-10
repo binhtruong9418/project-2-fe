@@ -27,7 +27,7 @@ export default function ProductCard({item}: InferProps<typeof ProductCard.propTy
                                         item?.discount > 0 && (
                                             <>
                                                 <p className={'text-decoration-line-through'}>{item?.price.toLocaleString("vi-VN")}₫</p>
-                                                <p className={'ml-2 text-danger'}>-{item?.discount}%</p>
+                                                <p className={'ml-2 text-danger'}>-{item?.discount?.toFixed(0)}%</p>
                                             </>
                                         )
                                     }

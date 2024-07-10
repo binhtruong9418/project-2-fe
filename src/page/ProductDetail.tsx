@@ -139,7 +139,7 @@ export default function () {
                                                     <p className={'mb-1'}
                                                        style={{textDecoration: 'line-through'}}>{product?.price.toLocaleString(
                                                         'vi-VN')}₫</p>
-                                                    <p className={'ml-2 text-danger mb-1'}>-{product?.discount}%</p>
+                                                    <p className={'ml-2 text-danger mb-1'}>-{product?.discount?.toFixed(0)}%</p>
                                                 </>
                                             )
                                         }

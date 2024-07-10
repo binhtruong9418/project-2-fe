@@ -33,7 +33,7 @@ const EditProductModal = ({ isVisible,
     price,
     category,
     quantity,
-    discount,
+    currentPrice,
     sizes,
     colors,
     refetchProduct,
@@ -61,7 +61,7 @@ const EditProductModal = ({ isVisible,
             productCategory,
             productPrice,
             productQuantity,
-            productDiscount,
+            productCurrentPrice,
             productSize
         } = data
 
@@ -87,7 +87,7 @@ const EditProductModal = ({ isVisible,
                 price: productPrice,
                 quantity: productQuantity,
                 images: listNewImages,
-                discount: productDiscount,
+                currentPrice: productCurrentPrice,
                 sizes: productSize,
                 colors: productColor,
             })
@@ -97,7 +97,7 @@ const EditProductModal = ({ isVisible,
                 productCategory: updateProduct.category,
                 productPrice: updateProduct.price,
                 productQuantity: updateProduct.quantity,
-                productDiscount: updateProduct.discount,
+                productCurrentPrice: updateProduct.currentPrice,
                 productSize: updateProduct.sizes,
             })
 
@@ -218,7 +218,7 @@ const EditProductModal = ({ isVisible,
                         productCategory: category,
                         productPrice: price,
                         productQuantity: quantity,
-                        productDiscount: discount,
+                        productCurrentPrice: currentPrice,
                         productSize: sizes,
                     }}
                     onFinish={handleSubmit}
@@ -298,11 +298,12 @@ const EditProductModal = ({ isVisible,
                             </Form.Item>
                         </Col>
                     </Row>
+
                     <Form.Item
                         name="productPrice"
                         rules={[{
                             required: true,
-                            message: 'Vui lòng nhập giá sản phẩm'
+                            message: 'Vui lòng nhập giá gốc sản phẩm'
                         }]}
                     >
                         <InputNumber
@@ -313,17 +314,15 @@ const EditProductModal = ({ isVisible,
                             min={0}
                         />
                     </Form.Item>
-
-
                     <Form.Item
-                        name="productDiscount"
+                        name="productCurrentPrice"
                     >
                         <InputNumber
-                            placeholder="Khuyến mãi"
-                            addonAfter='%'
+                            placeholder="Giá khuyến mãi"
+                            addonAfter='₫'
                             className="w-100"
                             size="large"
-                            defaultValue={0}
+                            min={0}
                         />
                     </Form.Item>
 
