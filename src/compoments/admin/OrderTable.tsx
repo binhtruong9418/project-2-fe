@@ -294,7 +294,7 @@ export default function OrderTable(): JSX.Element {
 
     const handleRefundOrder = async (record: any) => {
         try {
-            const refundStatus = await DysonApi.updateOrderStatus(record.orderId, ORDER_STATUS.REFUNDED)
+            const refundStatus = await DysonApi.refundOrder(record.orderId)
             if (refundStatus) {
                 toast.success('Hoàn tiền thành công')
                 await refetch()

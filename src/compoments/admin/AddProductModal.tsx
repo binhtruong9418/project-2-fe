@@ -293,7 +293,6 @@ const AddProductModal = ({
                             addonAfter='₫'
                             className="w-100"
                             size="large"
-                            min={0}
                         />
                     </Form.Item>
 

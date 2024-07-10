@@ -2,20 +2,21 @@ import DefaultLayout from "./layout/DefaultLayout.tsx";
 import {useNavigate, useParams, useSearchParams} from "react-router-dom";
 import {useQuery} from "react-query";
 import DysonApi from "../axios/DysonApi.ts";
-import {Descriptions, Divider, Skeleton, Timeline, Typography} from "antd";
+import {Descriptions, Divider, Popconfirm, Skeleton, Timeline, Tooltip, Typography} from "antd";
 import {CheckCircleOutlined, ClockCircleOutlined} from "@ant-design/icons";
 import moment from "moment";
-import {MdOutlineLocalShipping} from "react-icons/md";
+import {MdCancel, MdOutlineLocalShipping} from "react-icons/md";
 import {FiBox} from "react-icons/fi";
 import {upperCaseFirstLetter} from "../utils";
 import {useTranslation} from "react-i18next";
 import {useMemo} from "react";
+import {ORDER_STATUS} from "../constants";
+import {toast} from "react-toastify";
 
 export default function TrackingOrderDetail() {
     const {id: orderId} = useParams();
     const [searchParams] = useSearchParams();
 
-    console.log(searchParams, "searchParams")
     const identifier = searchParams.get('identifier')
     const navigate = useNavigate();
     const {t} = useTranslation();
@@ -33,6 +34,7 @@ export default function TrackingOrderDetail() {
                     ...product,
                     quantity: e.quantity,
                     orderPrice: e.price,
+                    orderPriceNotDiscount: e?.priceNotDiscount,
                     color: e.color,
                     size: e.size
                 }
@@ -54,12 +56,22 @@ export default function TrackingOrderDetail() {
         }
 
         return {
-            totalNotDiscount: orderDetail?.products?.reduce((acc: number, cur: any) => acc + +cur.quantity * +cur.orderPrice, 0) + orderDetail?.totalDiscount,
+            totalNotDiscount: orderDetail?.products?.reduce((acc: number, cur: any) => acc + +cur.quantity * +cur?.orderPriceNotDiscount, 0) ?? 0,
             totalDiscount: orderDetail?.totalDiscount,
             totalPayment: orderDetail?.totalPayment,
             shippingFee: orderDetail?.shippingFee   // 0
         }
     }, [orderDetail])
+
+    const handleCancel = async () => {
+        try {
+            await DysonApi.cancelOrder(orderId as string, identifier as string)
+            toast.success(t("Đã gửi yêu cầu hoàn trả đơn hàng. Vui lòng đợi xác nhận từ phía cửa hàng"))
+        } catch (error) {
+            console.log(error)
+            toast.error("Hoàn trả thất bại")
+        }
+    }
 
     if (isOrderDetailError || !orderId || !identifier) {
         return (
@@ -156,7 +168,21 @@ export default function TrackingOrderDetail() {
                                         ) : (
                                             <div style={{height: '60px'}}/>
                                         )
+                                    },
 
+                                    {
+                                        label: t('Đơn hàng đã bị hủy'),
+                                        color: 'green',
+                                        dot: <MdCancel style={{fontSize: '16px'}} color={'red'}/>,
+                                        children: orderDetail?.status === ORDER_STATUS.CANCELLED || orderDetail?.status === ORDER_STATUS.REFUNDED ? (
+                                            <div>
+                                                <div>
+                                                    {t("Đơn hàng của bạn đã bị hủy.")}
+                                                </div>
+                                            </div>
+                                        ) : (
+                                            <div style={{height: '60px'}}/>
+                                        )
                                     }
                                 ]}
                             />
@@ -274,6 +300,32 @@ export default function TrackingOrderDetail() {
                                 <div>{totalPayment?.toLocaleString('vi-VN')}₫</div>
                             </div>
 
+                            {
+                                orderDetail?.status !== ORDER_STATUS.DELIVERED && (
+                                    <Popconfirm
+                                        title={t("Hủy đơn hàng")}
+                                        description={t("Bạn có chắc chắn muốn hủy đơn hàng này không?")}
+                                        onConfirm={handleCancel}
+                                        okText={t("Xác nhận")}
+                                        cancelText={t("Hủy")}
+                                    >
+                                        <button
+                                            type="button"
+                                            className="btn mt-5 mr-3"
+                                            style={{
+                                                backgroundColor: 'red',
+                                                color: '#fff',
+                                                border: 'none',
+                                                borderRadius: '5px',
+                                                cursor: 'pointer',
+                                                padding: '10px 20px',
+                                            }}
+                                        >
+                                            {t("Hoàn trả")}
+                                        </button>
+                                    </Popconfirm>
+                                )
+                            }
                             <button
                                 type="button"
                                 className="btn mt-5"

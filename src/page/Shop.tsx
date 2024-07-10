@@ -143,7 +143,7 @@ export default function () {
                             <div className={"total-products"}>
                                 <p>
                                     {t("Hiển thị")} {" "}
-                                    {dataSearch.page * dataSearch.limit - dataSearch.limit + 1} - {dataSearch.page * dataSearch.limit}
+                                    {dataSearch.page * dataSearch.limit - dataSearch.limit + 1} - {dataSearch.page * dataSearch.limit > totalProduct ? totalProduct : dataSearch.page * dataSearch.limit}
                                     {" "} {t("trong")} {totalProduct} {t("sản phẩm")}
                                 </p>
                             </div>

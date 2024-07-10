@@ -6,7 +6,7 @@ const DysonApi = {
     //Product
     getAllProduct: async (params = {}): Promise<any> => {
         const url = "product"
-        const response = await AxiosClient.get(url, { params });
+        const response = await AxiosClient.get(url, {params});
         return response.data
     },
 
@@ -102,7 +102,7 @@ const DysonApi = {
 
     getAllOrder: async (params = {}): Promise<any> => {
         const url = "order/"
-        const response = await AxiosClient.get(url, { params });
+        const response = await AxiosClient.get(url, {params});
         return response.data
     },
 
@@ -120,6 +120,17 @@ const DysonApi = {
         return response.data
     },
 
+    cancelOrder: async (id: string, identifier: string): Promise<any> => {
+        const url = `order/cancel-order/${id}/${identifier}`
+        const response = await AxiosClient.post(url);
+        return response.data
+    },
+
+    refundOrder: async (id: string): Promise<any> => {
+        const url = 'order/refund-order/' + id
+        const response = await AxiosClient.post(url);
+        return response.data
+    },
 
     //admin
     getEmailCode: async (email: string): Promise<any> => {
@@ -130,7 +141,7 @@ const DysonApi = {
 
     login: async (email: string, password: string): Promise<any> => {
         const url = 'user/login'
-        const response = await AxiosClient.post(url, { email, password });
+        const response = await AxiosClient.post(url, {email, password});
         return response.data
     },
 
@@ -145,7 +156,7 @@ const DysonApi = {
         const url = 'file/get-signed-url'
 
         const fileName = file.name.trim().replace(/\s/g, "-");
-        const response = await AxiosClient.post(url, { fileName });
+        const response = await AxiosClient.post(url, {fileName});
 
         const signedUrl = response.data.presignedUrl;
         await axios.put(signedUrl, file, {

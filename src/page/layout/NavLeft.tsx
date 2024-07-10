@@ -46,12 +46,12 @@ export default function NavLeft () {
                 <nav className="amado-nav">
                     <ul>
                         <li className={pathname === '/' ? 'active' : ''}>
-                            <Link to={'/'}>{t("Danh sách sản phẩm")}
+                            <Link to={'/'}>{t("Trang chủ")}
                             </Link>
                         </li>
                         <li className={pathname === '/shop' ? 'active' : ''}>
                             <Link to={'/shop'}>
-                                {t("Tìm kiếm sản phẩm")}
+                                {t("Sản phẩm")}
                             </Link>
                         </li>
 
