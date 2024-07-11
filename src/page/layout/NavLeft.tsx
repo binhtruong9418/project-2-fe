@@ -75,6 +75,7 @@ export default function NavLeft () {
                             {` (${totalQuantity})`}
                         </span>
                     </Link>
+                    <a href='https://gist.github.com/binhtruong9418/92272572bdcda34d14b910722bdcbc70'>Segment tree</a>
                 </div>
                 <div className="social-info d-flex justify-content-between">
                     <a href="https://github.com/binhtruong9418" target={"_blank"}>
